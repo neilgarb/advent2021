@@ -20,37 +20,36 @@ func do() error {
 	if err != nil {
 		return err
 	}
-	f, err := os.Open(filepath.Join(wd, "five_one/input"))
+	f, err := os.Open(filepath.Join(wd, "five_two/input"))
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
-	plane := make(map[point]int)
 	var tot int
+	plane := make(map[point]int)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		point1, point2 := parseLine(line)
-		if point1.x == point2.x {
-			if point2.y < point1.y {
-				point1, point2 = point2, point1
+		p1, p2 := parseLine(line)
+		p := p1
+		for {
+			plane[p]++
+			if plane[p] == 2 {
+				tot++
 			}
-			for y := point1.y; y <= point2.y; y ++ {
-				plane[point{point1.x, y}]++
-				if plane[point{point1.x, y}] == 2 {
-					tot ++
-				}
+			if p == p2 {
+				break
 			}
-		} else {
-			if point2.x < point1.x {
-				point1, point2 = point2, point1
+			if p2.x>p1.x {
+				p.x++
+			} else if p2.x < p1.x {
+				p.x--
 			}
-			for x := point1.x; x <= point2.x; x ++ {
-				plane[point{x, point1.y}]++
-				if plane[point{x, point1.y}] == 2 {
-					tot ++
-				}
+			if p2.y>p1.y {
+				p.y++
+			} else if p2.y < p1.y {
+				p.y--
 			}
 		}
 	}
